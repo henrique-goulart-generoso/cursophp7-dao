@@ -45,6 +45,8 @@ require_once("config.php");
 
 //echo $aluno;
 
+/*ATULIZANDO UM DADO
+
 $usuario = new Usuario();
 
 $usuario->loadById(5);
@@ -52,4 +54,13 @@ $usuario->loadById(5);
 $usuario->update("professor", "baladementa");
 
 echo $usuario;
+*/
+$usuario = new Usuario();
+
+$usuario->loadById(4);
+
+$usuario->delete();
+
+echo $usuario;
+
 ?>
