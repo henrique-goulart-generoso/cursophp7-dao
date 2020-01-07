@@ -56,12 +56,7 @@ class Usuario {
   	));
 
   	if (count($results) > 0) {
-  		$row = $results[0];
-
-        $this->setIdusuario($row['idusuario']);
-        $this->setLogin($row['deslogin']);
-        $this->setSenha($row['senha']);
-        $this->setCadastro(new DateTime($row['dtcadastro']));
+  		$this->setData($results[0]);
       }
   }
 
@@ -88,18 +83,62 @@ class Usuario {
   	));
 
   	if (count($results) > 0) {
-  		$row = $results[0];
-
-        $this->setIdusuario($row['idusuario']);
-        $this->setLogin($row['deslogin']);
-        $this->setSenha($row['senha']);
-        $this->setCadastro(new DateTime($row['dtcadastro']));
+  		$this->setData($results[0]);
       } else {
    
         throw new Exception("Login e/ou senha invalidos");
 
       }
     
+  }
+
+    public function setData($data){
+
+       $this->setIdusuario($data['idusuario']);
+        $this->setLogin($data['deslogin']);
+        $this->setSenha($data['senha']);
+        $this->setCadastro(new DateTime($data['dtcadastro']));
+
+   }
+
+  public function insert(){
+
+    $sql = new Sql();
+
+   $results = $sql->select("CALL sp_usuarios_insert(:LOGIN, :PASSWORD)", array(
+          ':LOGIN'=>$this->getLogin(),
+          ':PASSWORD'=>$this->getSenha()
+
+   ));
+
+   if (count($results) > 0) {
+   	$this->setData($results[0]);
+   }
+
+  }
+
+  public function update($Login, $password){
+    
+    $this->setLogin($Login);
+    $this->setSenha($password);
+
+    $sql = new Sql();
+
+    $sql->query("UPDATE tb_usuarios SET deslogin = :LOGIN, senha = :PASSWORD WHERE idusuario= :ID", array(
+
+       ':LOGIN'=>$this->getLogin(),
+       ':PASSWORD'=>$this->getSenha(),
+       ':ID'=>$this->getIdusuario()
+
+    ));
+
+  }
+
+  public function __construct($Login = "", $password = ""){
+
+       $this->setLogin($Login);
+       $this->setSenha($password);
+
   }
 
    
@@ -110,7 +149,7 @@ class Usuario {
        "idusuario"=>$this->getIdusuario(),
        "deslogin"=>$this->getLogin(),
        "senha"=>$this->getSenha(),
-       "dtcadastro"=>$this->getCadastro()->format("d/m/y M:i:s")
+       "dtcadastro"=>$this->getCadastro()
      ));
   }
 
